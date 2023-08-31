@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from matplotlib.colors import ListedColormap
+import os
 
 class Cube3x3:
     def __init__(self):
@@ -71,7 +72,7 @@ class Cube3x3:
             'B2': self.B2,
         }
         
-    def move(self, moves_string, print_moves=False, threeD=False):
+    def move(self, moves_string, print_moves=False, threeD=False,save=False,save_dir=""):
         # Replace special characters and split the input string
         moves_string = moves_string.replace("’", "i")  # Replace special single quote character
         moves_string = moves_string.replace("'", "i")  # Replace special single quote character
@@ -84,7 +85,7 @@ class Cube3x3:
                 method_calls.append(self.move_mapping[move])
             else:
                 method_calls.append("Invalid Move: " + move)
-
+        itrr = 0
         # Print the converted method calls
         for method_call in method_calls:
             if print_moves:
@@ -92,12 +93,24 @@ class Cube3x3:
                     self.print_3d()
                 else:
                     self.print_cube()
+            if save:
+                if threeD:
+                    self.print_3d(save=True,save_name=os.path.join(save_dir,str(itrr)+".png"),print=False)
+                else:
+                    self.print_cube(save=True,save_name=os.path.join(save_dir,str(itrr)+".png"),print=False)
+            itrr+=1
             method_call()
         if print_moves:
             if threeD:
                 self.print_3d()
             else:
                 self.print_cube()
+        if save:
+            if threeD:
+                self.print_3d(save=True,save_name=os.path.join(save_dir,str(itrr)+".png"),print=False)
+            else:
+                self.print_cube(save=True,save_name=os.path.join(save_dir,str(itrr)+".png"),print=False)
+
     ## Possible Moves
 
     def U(self):
@@ -205,7 +218,7 @@ class Cube3x3:
         self.B()
 
 
-    def print_cube(self):
+    def print_cube(self,save=False,save_name="",print = True):
         fig, axs = plt.subplots(2, 3, figsize=(8, 6))
 
         # Plot each 2D slice with the specified colors
@@ -221,8 +234,13 @@ class Cube3x3:
         # Adjust layout and display the plot
         plt.tight_layout()
         plt.show()
+        if print:
+            plt.close()
+        if save:
+            fig.savefig(save_name)
 
-    def print_3d(self):
+
+    def print_3d(self,save=False,save_name="", print = True):
         fig = plt.figure(figsize=(8, 8))
         ax = fig.add_subplot(111, projection='3d')
 
@@ -254,12 +272,14 @@ class Cube3x3:
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
-        ax.set_title('Rubik\'s Cube')
         ax.set_xticks([0.5, 1.5, 2.5])
         ax.set_yticks([0.5, 1.5, 2.5])
         ax.set_zticks([0.5, 1.5, 2.5])
         ax.set_xticklabels(['0', '1', '2'])
         ax.set_yticklabels(['0', '1', '2'])
         ax.set_zticklabels(['0', '1', '2'])
-
         plt.show()
+        if print:
+            plt.close()
+        if save:
+            fig.savefig(save_name)
