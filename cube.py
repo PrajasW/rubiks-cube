@@ -38,9 +38,9 @@ class Cube3x3:
                     [3, 3, 3]
                 ],
                 [
-                    [0, 0, 1],
-                    [1, 2, 3],
-                    [3, 4, 5]
+                    [4, 4, 4],
+                    [4, 4, 4],
+                    [4, 4, 4]
                 ],
                 [
                     [5, 5, 5],
@@ -71,7 +71,7 @@ class Cube3x3:
             'B2': self.B2,
         }
         
-    def move(self, moves_string, print_moves=False):
+    def move(self, moves_string, print_moves=False, threeD=False):
         # Replace special characters and split the input string
         moves_string = moves_string.replace("’", "i")  # Replace special single quote character
         moves_string = moves_string.replace("'", "i")  # Replace special single quote character
@@ -88,10 +88,16 @@ class Cube3x3:
         # Print the converted method calls
         for method_call in method_calls:
             if print_moves:
-                print(self.print_cube())
+                if threeD:
+                    self.print_3d()
+                else:
+                    self.print_cube()
             method_call()
         if print_moves:
-            print(self.print_cube())
+            if threeD:
+                self.print_3d()
+            else:
+                self.print_cube()
     ## Possible Moves
 
     def U(self):
@@ -181,14 +187,14 @@ class Cube3x3:
         self.F()
         self.F()
     def B(self):
-        self.faces[4] = np.rot90(self.faces[4],1) # rotating clockwise
+        self.faces[4] = np.rot90(self.faces[4],-1) # rotating clockwise
         temp = self.faces[0][0].copy()
         self.faces[0][0] = self.faces[3][:,2]
         self.faces[3][::-1,2] = self.faces[5][2]
         self.faces[5][2] = self.faces[1][:,0]
         self.faces[1][::-1,0] = temp
     def Bi(self):
-        self.faces[4] = np.rot90(self.faces[4],-1) # rotating anti clockwise
+        self.faces[4] = np.rot90(self.faces[4],1) # rotating anti clockwise
         temp = self.faces[0][0].copy()
         self.faces[0][0] = self.faces[1][::-1,0]
         self.faces[1][:,0] = self.faces[5][2]
@@ -229,16 +235,16 @@ class Cube3x3:
                     # top bar (Working)
                     if f == 0:
                         ax.bar3d(j, 2-i, 3, 1, 1, 0.01, shade=True, color=face_color)
-                    # left bar
+                    # left bar (Working)
                     elif f == 1:
                         ax.bar3d(0, 2-j, 2-i, 0.01, 1, 1, shade=True, color=face_color)
                     # front bar (Working)
                     elif f == 2:
                         ax.bar3d(j, 0, 2-i, 1, 0.01, 1, shade=True, color=face_color)
-                    # right bar
+                    # right bar (Working)
                     elif f == 3:
-                        ax.bar3d(3, 2-j, 2-i, 0.01, 1, 1, shade=True, color=face_color)
-                    # back bar
+                        ax.bar3d(3, j, 2-i, 0.01, 1, 1, shade=True, color=face_color)
+                    # back bar (Working)
                     elif f == 4:
                         ax.bar3d(2-j, 3, 2-i, 1, 0.01, 1, shade=True, color=face_color)
                     # bottom bar (Working)
@@ -248,7 +254,7 @@ class Cube3x3:
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
-        ax.set_title('3x3x3 Rubik\'s Cube')
+        ax.set_title('Rubik\'s Cube')
         ax.set_xticks([0.5, 1.5, 2.5])
         ax.set_yticks([0.5, 1.5, 2.5])
         ax.set_zticks([0.5, 1.5, 2.5])
@@ -257,10 +263,3 @@ class Cube3x3:
         ax.set_zticklabels(['0', '1', '2'])
 
         plt.show()
-
-
-cube = Cube3x3()
-cube.print_3d()
-moves = 'B'
-cube.move(moves)
-cube.print_3d()
